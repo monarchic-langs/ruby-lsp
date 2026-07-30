@@ -6,11 +6,33 @@
   outputs = {nixpkgs, ...}: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
+    ruby-lsp = pkgs.rubyPackages.ruby-lsp;
   in {
     formatter.${system} = pkgs.alejandra;
-    packages.${system}.default = pkgs.rubyPackages.ruby-lsp;
+
+    packages = {
+      ${system}.default = ruby-lsp;
+    };
+
+    checks = {
+      ${system} = {
+        package = ruby-lsp;
+
+        format = pkgs.runCommand "ruby-lsp-flake-format" {nativeBuildInputs = [pkgs.alejandra];} ''
+          alejandra --check ${./flake.nix}
+          touch $out
+        '';
+
+        smoke = pkgs.runCommand "ruby-lsp-smoke" {nativeBuildInputs = [ruby-lsp];} ''
+          command -v ruby-lsp
+          ruby-lsp --version
+          touch $out
+        '';
+      };
+    };
+
     devShells.${system}.default = pkgs.mkShell {
-      packages = [pkgs.rubyPackages.ruby-lsp pkgs.ruby];
+      packages = [ruby-lsp pkgs.ruby];
     };
   };
 }

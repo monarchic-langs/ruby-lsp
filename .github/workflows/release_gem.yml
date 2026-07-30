@@ -10,7 +10,7 @@ jobs:
   release_gem:
     name: Release gem on RubyGems.org
     if: github.repository == 'Shopify/ruby-lsp'
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS) }}
 
     permissions:
       contents: write
@@ -36,7 +36,7 @@ jobs:
     name: Create GitHub release
     if: github.repository == 'Shopify/ruby-lsp'
     needs: release_gem
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER_LABELS) }}
 
     permissions:
       contents: write
