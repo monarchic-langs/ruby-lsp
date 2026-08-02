@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - monarchic
-  merge_group:
   workflow_dispatch:
 
 permissions:
